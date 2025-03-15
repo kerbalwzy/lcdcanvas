@@ -1,7 +1,8 @@
 import subprocess
+from app.consts import APP_NAME
 
-AppName = r"lcdcavans.exe"
-ProductName = r"lcdcavans"
+AppName = f"{APP_NAME}.exe"
+ProductName = r"LCD CAVANS"
 ProductVersion = r"1.0.0.0"
 FileVersion = r"1.0.0.0"
 FileDescription = r"LCD CAVANS"

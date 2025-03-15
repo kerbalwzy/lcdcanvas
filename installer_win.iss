@@ -1,8 +1,8 @@
 [Setup]
-AppName=lcdcavans
+AppName=LCDCAVANS
 AppVersion=1.0.0.0
 VersionInfoDescription=The first version
-DefaultDirName={autopf}\lcdcavans
+DefaultDirName={autopf}\LCDCAVANS
 OutputDir=dist
 OutputBaseFilename=lcdcavans_1.0.0.0_Setup
 SetupIconFile=static\favicon.ico
@@ -12,10 +12,10 @@ PrivilegesRequired=admin
 Source: "build\main.dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{commondesktop}\lcdcavans"; Filename: "{app}\lcdcavans.exe"; IconFilename: "{app}\static\favicon.ico"
+Name: "{commondesktop}\LCDCAVANS"; Filename: "{app}\LCDCAVANS.exe"; IconFilename: "{app}\static\favicon.ico"
 
 [Run]
-Filename: "{app}\lcdcavans.exe"; Description: "Startup"; Flags: shellexec postinstall nowait
+Filename: "{app}\LCDCAVANS.exe"; Description: "Startup"; Flags: shellexec postinstall nowait
 
 [Code]
 
@@ -24,10 +24,10 @@ var
   ResultCode: Integer;
   UninstallExe: String;
 begin
-  if CheckForMutexes('lcdcavans') then
+  if CheckForMutexes('LCDCAVANS') then
   begin
     Log('Detected a running process');
-    if Exec('taskkill', '/f /im lcdcavans.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    if Exec('taskkill', '/f /im LCDCAVANS.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
       Log('Successfully terminated the process')
     else
       Log('Failed to terminate the process, error code: ' + IntToStr(ResultCode));
@@ -57,7 +57,7 @@ begin
     end;
     
     // Delete residual files
-    if DelTree(ExpandConstant('{autopf}\lcdcavans'), True, True, True) then
+    if DelTree(ExpandConstant('{autopf}\LCDCAVANS'), True, True, True) then
       Log('Successfully deleted residual files')
     else
       Log('Failed to delete residual files');

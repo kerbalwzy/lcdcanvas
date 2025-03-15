@@ -172,7 +172,6 @@ build/
 main.build/
 main.dist/
 main.onefile-build/
-lcdcavans.exe
 absolute/
 static/
 scripts/

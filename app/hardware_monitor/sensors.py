@@ -578,7 +578,7 @@ class Weather:
                 if lang == "zh":
                     lang = "zh_cn"
                 url = f"https://api.openweathermap.org/data/2.5/weather?lat={self.lat}&lon={self.lon}&appid={self.apiKey}&lang={lang}&units=metric"
-                res = self.session.get(url=url, timeout=2)
+                res = self.session.get(url=url, timeout=1)
                 data = res.json()
                 self.__text = "%s\n%d°C" % (
                     data["weather"][0]["description"],

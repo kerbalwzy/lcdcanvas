@@ -2,7 +2,7 @@
 import os
 import sys
 
-APP_NAME = "LCD CAVANS"
+APP_NAME = "LCDCAVANS" # no space or special character in name !!!
 IS_EXE = not sys.argv[0].lower().endswith(".py")
 if IS_EXE:
     BASE_DIR = os.path.dirname(sys.executable)

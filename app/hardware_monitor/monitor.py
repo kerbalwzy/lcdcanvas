@@ -188,7 +188,7 @@ class HardwareMonitorAPI(UIAPIBase):
         #
         if not consts.IS_EXE:
             return
-        name = f"{consts.APP_NAME} Setup"
+        name = f"{consts.APP_NAME}_AutoStartup"
         exepath = f"{consts.BASE_DIR}\\{consts.APP_NAME}.exe"
         if startup:
             set_win_startup(name, exepath)
