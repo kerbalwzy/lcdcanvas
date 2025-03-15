@@ -416,9 +416,7 @@ const startThemePreview = () => {
   themePreviewT = setInterval(() => {
     if (
       !player.value ||
-      !monitorSettings.lastScreen ||
-      !screenSettings.lastTheme ||
-      sensors.value.length == 0
+      !screenSettings.lastTheme
     ) {
       return;
     }
@@ -482,7 +480,7 @@ window.addEventListener("pywebviewready", function () {
         }
         displayState.value = res.displayState || false;
         // Start theme preview interval
-        // startThemePreview();
+        startThemePreview();
       })
       .finally(() => {
         // Show the ready page
@@ -490,13 +488,13 @@ window.addEventListener("pywebviewready", function () {
       });
   }, 100);
 
-  // window.addEventListener("visibilitychange", () => {
-  //   if (document.visibilityState === "visible") {
-  //     startThemePreview();
-  //   } else {
-  //     stopThemePreview();
-  //   }
-  // });
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      startThemePreview();
+    } else {
+      stopThemePreview();
+    }
+  });
 });
 </script>
 
