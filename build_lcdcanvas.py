@@ -2,11 +2,11 @@ import subprocess
 from app.consts import APP_NAME
 
 AppName = f"{APP_NAME}.exe"
-ProductName = r"LCD CAVANS"
+ProductName = r"LCD CANVAS"
 ProductVersion = r"1.0.0.0"
 FileVersion = r"1.0.0.0"
-FileDescription = r"LCD CAVANS"
-CopyRight = r"Copyright (c) 2025 lcdcavans"
+FileDescription = r"LCD CANVAS"
+CopyRight = r"Copyright (c) 2025 lcdcanvas.com"
 
 nuitka_command = [
     ".venv/Scripts/python.exe",
@@ -14,7 +14,7 @@ nuitka_command = [
     "nuitka",
     "--standalone",
     "--windows-icon-from-ico=static/favicon.ico",
-    # "--windows-console-mode=disable", # disbale console
+    "--windows-console-mode=disable", # disbale console
     "--windows-uac-admin",  # require admin
     "--include-package=encodings",  
     "--include-module=codecs",  
@@ -32,6 +32,7 @@ nuitka_command = [
     f"--product-version={ProductVersion}",
     f"--file-version={FileVersion}",
     f"--file-description={FileDescription}",
+    f"--copyright={CopyRight}",
     "main.py",
     "--output-dir=build",
     f"--output-filename={AppName}",
