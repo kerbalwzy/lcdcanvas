@@ -3,7 +3,7 @@ AppName=LCDCANVAS
 AppVersion=1.0.0.0
 DefaultDirName={autopf}\LCDCANVAS
 OutputDir=dist
-OutputBaseFilename=lcdcavans_1.0.0.0_Setup
+OutputBaseFilename=lcdcanvas_1.0.0.0_Setup
 SetupIconFile=static\favicon.ico
 PrivilegesRequired=admin
 
