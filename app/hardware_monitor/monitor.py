@@ -80,6 +80,13 @@ class HardwareMonitorAPI(UIAPIBase):
         # try to match a screen driver
         driver = SUPPORT_SCREENS_MAP.get(screen, None)
         with DisplayLock:
+            if self.__lcd is not None:
+                # Close the prev screen dirver
+                try:
+                    self.__lcd.close()
+                except Exception:
+                    pass
+            # Set the new screen driver
             self.__lcd = driver
         # If selected screen, update the screen settings
         if self.__lcd:
@@ -177,7 +184,6 @@ class HardwareMonitorAPI(UIAPIBase):
         logger.debug(f"Get the sensor data: {sensors}")
         return res
 
-
     def __set_start_up(self, startup: bool) -> None:
         """
         Set whether to start up automatically.
@@ -245,6 +251,8 @@ class HardwareMonitorAPI(UIAPIBase):
                 imgSrc = UIWindowManager.theme_player_window().evaluate_js(
                     "window.playerToImageSrc()"
                 )
+                if not imgSrc:
+                    continue
                 img = image_from_base64(imgSrc)
                 img = img.rotate(self.__rotation, expand=True)
                 # Display the image
@@ -255,7 +263,7 @@ class HardwareMonitorAPI(UIAPIBase):
                     self.__lcd.display(img)
                 cost_time = time.time() - start
                 logger.info(
-                f"Screen <{self.__lcd.unique_id()}> display succeeded. Time taken: {cost_time:.2f}s"
+                    f"Screen <{self.__lcd.unique_id()}> display succeeded. Time taken: {cost_time:.2f}s"
                 )
             except Exception as e:
                 logger.error(e)
@@ -276,7 +284,6 @@ class HardwareMonitorAPI(UIAPIBase):
             else:
                 error_count = 0
                 time.sleep(0.1 if cost_time > 1 else 1 - cost_time)
-                
 
         self.__stop_display()
 

@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="canvasRef"></canvas>
+  <canvas class="pywebview-drag-region" ref="canvasRef"></canvas>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
@@ -40,7 +40,7 @@ const playerToImageSrc = () => {
 
 onMounted(() => {
   if (canvasRef.value) {
-    player.value = new ThemePlayer(canvasRef.value, DEFAULT_CANVAS_META);
+    player.value = new ThemePlayer(canvasRef.value, DEFAULT_CANVAS_META, true);
   }
 });
 

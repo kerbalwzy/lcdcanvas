@@ -45,30 +45,42 @@ class UIWindowManager:
     def theme_player_window(cls) -> webview.Window:
         if cls.ThemePlayerWindow is not None:
             return cls.ThemePlayerWindow
-        # 创建一个隐藏窗口
+        # Create a hidden window to play theme
         from app.hardware_monitor.theme import theme_player_api
 
         window = webview.create_window(
-            title="hidden-window-ThemePlayer",
+            title="ThemePlayerHiddenWindow",
             url=consts.THEME_DRAWER_URL,
             js_api=theme_player_api,
             hidden=True,
+            frameless=True,
+            resizable=False,
+            on_top=True,
+            easy_drag=True,
         )
-        window.events.closed += cls._on_window_closed(window=window)
+        window.events.closing += cls._on_window_closing(window=window)
         cls.ThemePlayerWindow = window
         logger.debug("Create ThemePlayer window success")
         return window
 
     @classmethod
+    def _on_window_closing(cls, window: webview.Window):
+        def func():
+            if window == cls.ThemePlayerWindow:
+                # Use hidden instead of close to prevent window from closing
+                cls.ThemePlayerWindow.hidden = True
+                cls.ThemePlayerWindow.hide()
+                logger.warning("ThemePlayer window hidden instead of close")
+                return False  # return False to prevent window from closing
+
+        return func
+
+    @classmethod
     def _on_window_closed(cls, window: webview.Window):
         def func():
-            logger.warning(f"Window <{window.title}> closed")
-            if window == cls.ThemePlayerWindow:
-                cls.ThemePlayerWindow = None
-            elif window == cls.HWMonitorWindow:
+            if window == cls.HWMonitorWindow:
                 cls.HWMonitorWindow = None
-            elif window == cls.HWMThemeEditorWindow:
-                cls.HWMThemeEditorWindow = None
+            logger.warning(f"Window <{window.title}> closed")
 
         return func
 

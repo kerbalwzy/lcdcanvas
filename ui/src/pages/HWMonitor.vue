@@ -334,6 +334,7 @@ const importTheme = throttle(() => {
 const selectScreen = (screen: string) => {
   if (!screen) {
     screen = "";
+    stopDisplay();
   }
   pywebview.api.selectScreen(screen).then((success: boolean) => {
     if (success && screen) {
@@ -359,6 +360,7 @@ const selectTheme = (theme: string) => {
   if (theme == null) {
     theme = "";
     player.value!.canvas.clear();
+    stopDisplay();
   }
   pywebview.api.selectTheme(theme).then((content: string) => {
     if (content) {
@@ -399,6 +401,13 @@ const toggleDisplay = () => {
   pywebview.api.toggleDisplay(displayState.value).finally(() => {
     displayStateUpdating.value = false;
   });
+};
+
+const stopDisplay = () => {
+  // Only when the display is on, stop it
+  if (displayState.value) {
+    toggleDisplay();
+  }
 };
 
 let themePreviewT: any = null;
@@ -450,40 +459,44 @@ window.addEventListener("pywebviewready", function () {
   loadThemes();
   setTimeout(() => {
     // Get the monitor settings
-    pywebview.api.getMonitorSettings().then((res: any) => {
-      monitorSettings.lang = res.lang || "";
-      monitorSettings.startup = res.startup || false;
-      monitorSettings.lastScreen = res.lastScreen || "";
-      res.weather = res.weather || {
-        apiKey: "5796abbde9106b7da4febfae8c44c232",
-        lat: 0,
-        lon: 0,
-      };
-      Object.assign(monitorSettings.weather, res.weather);
-      // If the last screen is in the screens list, select it
-      if (screens.includes(monitorSettings.lastScreen)) {
-        selectScreen(monitorSettings.lastScreen);
-      } else {
-        selectScreen("");
-      }
-      if (monitorSettings.lang) {
-        locale.value = monitorSettings.lang;
-      }
-      displayState.value = res.displayState || false;
-      // Start theme preview interval
-      startThemePreview();
-      // Show the ready page
-      showPage.value = true;
-    });
-  }, 50);
+    pywebview.api
+      .getMonitorSettings()
+      .then((res: any) => {
+        monitorSettings.lang = res.lang || "";
+        monitorSettings.startup = res.startup || false;
+        monitorSettings.lastScreen = res.lastScreen || "";
+        res.weather = res.weather || {
+          apiKey: "5796abbde9106b7da4febfae8c44c232",
+          lat: 0,
+          lon: 0,
+        };
+        Object.assign(monitorSettings.weather, res.weather);
+        // If the last screen is in the screens list, select it
+        if (screens.includes(monitorSettings.lastScreen)) {
+          selectScreen(monitorSettings.lastScreen);
+        } else {
+          selectScreen("");
+        }
+        if (monitorSettings.lang) {
+          locale.value = monitorSettings.lang;
+        }
+        displayState.value = res.displayState || false;
+        // Start theme preview interval
+        // startThemePreview();
+      })
+      .finally(() => {
+        // Show the ready page
+        showPage.value = true;
+      });
+  }, 100);
 
-  window.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      startThemePreview();
-    } else {
-      stopThemePreview();
-    }
-  });
+  // window.addEventListener("visibilitychange", () => {
+  //   if (document.visibilityState === "visible") {
+  //     startThemePreview();
+  //   } else {
+  //     stopThemePreview();
+  //   }
+  // });
 });
 </script>
 

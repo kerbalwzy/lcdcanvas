@@ -1,7 +1,4 @@
-import {
-  SUPPORT_FONTS,
-  WEATHER_ICON_FILEPATH_MAP,
-} from "@/consts/theme.c";
+import { SUPPORT_FONTS, WEATHER_ICON_FILEPATH_MAP } from "@/consts/theme.c";
 import { fabric } from "fabric";
 import { markRaw } from "vue";
 import { fabricGif } from "@/model/fabricGIF";
@@ -16,16 +13,29 @@ export class ThemePlayer {
   public propertiesToInclude: string[] = ["name", "data"];
   public canvas: fabric.Canvas;
 
-  constructor(element: HTMLCanvasElement, canvasMeta: CanvasMeta) {
+  constructor(
+    element: HTMLCanvasElement,
+    canvasMeta: CanvasMeta,
+    hideTooltip: boolean = false
+  ) {
     const canvas = new fabric.Canvas(element, {
       selection: false,
       backgroundColor: "rgba(0, 0, 0)",
     });
     // Must use markRaw to avoid Vue's reactivity system from tracking the canvas object.
     this.canvas = markRaw(canvas);
-    this.canvas.hoverCursor = "help";
     this.initFonts();
-    this.tooltip = this.initTooltip();
+    if (hideTooltip) {
+      this.tooltip = new fabric.Text("", {
+        opacity: 0, // hidden by default
+        selectable: false,
+        evented: false,
+        excludeFromExport: true, // exclude from canvas export
+      });
+    } else {
+      this.canvas.hoverCursor = "help";
+      this.tooltip = this.initTooltip();
+    }
     this.meta = this.fromCanvasMeta(canvasMeta);
 
     // Render loop
@@ -253,7 +263,7 @@ export class ThemePlayer {
     if (foreground.width == width) return;
     // Update the width of the foreground object
     foreground.set({ width: width });
-    barChart.data.value = value
+    barChart.data.value = value;
   }
 
   public updateDonutChart(donutChart: fabric.Group, value: number) {
@@ -282,7 +292,7 @@ export class ThemePlayer {
       strokeDashArray: processDashArray,
       endAngle: background.endAngle! * value,
     });
-    donutChart.data.value = value
+    donutChart.data.value = value;
   }
 
   public updateImage(image: fabric.Image, value: any) {
