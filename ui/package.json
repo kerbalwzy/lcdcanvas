@@ -1,0 +1,37 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "build:watch": "vite build --watch"
+  },
+  "dependencies": {
+    "@mdi/font": "6.2.95",
+    "fabric": "^5.4.2",
+    "gifuct-js": "^2.1.2",
+    "roboto-fontface": "*",
+    "uuid": "^11.0.3",
+    "vue": "^3.4.21",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.4.3",
+    "vuetify": "^3.5.8"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.24.0",
+    "@types/fabric": "^5.3.9",
+    "@types/node": "^20.11.25",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.71.1",
+    "typescript": "^5.4.2",
+    "unplugin-fonts": "^1.1.1",
+    "unplugin-vue-components": "^0.26.0",
+    "unplugin-vue-router": "^0.9.1",
+    "vite": "^5.1.5",
+    "vite-plugin-vue-layouts": "^0.11.0",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vue-tsc": "^2.0.6"
+  }
+}
