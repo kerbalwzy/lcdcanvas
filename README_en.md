@@ -21,7 +21,7 @@ If you are an LCD secondary screen manufacturer and would like this open-source 
 
 | Serial No. | Size | Resolution | Code | Manufacturer | License |
 | --- | --- | --- | --- | --- | --- |
-| VirtulScreen | Unlimited | Follows Theme | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
+| VirtulScreen | Unlimited | Follow The Theme | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
 | WCH32 | 3.5 | 480x320 | [SN_WCH32.py](./libs/lcds/SN_WCH32.py) | <a href="http://www.qdtft.com/" target="_blank">QDTFT</a> | - |
 
 ## Usage:
@@ -64,7 +64,7 @@ If you are an LCD secondary screen manufacturer and would like this open-source 
 A theme file is a JSON file used to describe the display content of the screen. To create or edit theme files, please visit
 <a href="https://lcdcanvas.com/themeeditor" target="_blank">lcdcanvas.com</a>.
 
-## Open Source License
+## License
 
 This project is licensed under the
 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank">CC BY-NC-SA 4.0</a>
