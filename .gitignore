@@ -175,5 +175,7 @@ main.onefile-build/
 absolute/
 static/
 scripts/
+themes/
+!themes/DemoTheme.json
 
 

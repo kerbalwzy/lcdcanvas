@@ -3,8 +3,8 @@ from app.consts import APP_NAME
 
 AppName = f"{APP_NAME}.exe"
 ProductName = r"LCD CANVAS"
-ProductVersion = r"1.0.0.0"
-FileVersion = r"1.0.0.0"
+ProductVersion = r"1.0.0.1"
+FileVersion = r"1.0.0.1"
 FileDescription = r"LCD CANVAS"
 CopyRight = r"Copyright (c) 2025 lcdcanvas.com"
 
@@ -23,10 +23,10 @@ nuitka_command = [
     # add dlls, must be specified file
     "--include-data-files=libs/lhm/LibreHardwareMonitorLib.dll=libs/lhm/LibreHardwareMonitorLib.dll",  
     "--include-data-files=libs/lhm/HidSharp.dll=libs/lhm/HidSharp.dll", 
+    "--include-data-files=themes/DemoTheme.json=themes/DemoTheme.json",
     # add data dirs
     "--include-data-dir=libs/lhm=libs/lhm",
     "--include-data-dir=static=static",
-    "--include-data-dir=themes=themes",
     # version info
     f"--product-name={ProductName}",
     f"--product-version={ProductVersion}",

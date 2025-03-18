@@ -18,7 +18,7 @@ from app.setting import settings
 from app.ui import UIWindowManager
 from app.util import del_win_startup, image_from_base64, set_win_startup
 from app.hardware_monitor.sensors import SensorsMap, weather
-from libs.lcds import LCD, SUPPORT_SCREENS_MAP
+from libs.lcds import LCD, SUPPORT_SCREENS_MAP, lcd_virtual_screen
 
 __all__ = ["hardware_monitor_api"]
 
@@ -181,7 +181,7 @@ class HardwareMonitorAPI(UIAPIBase):
             instance = SensorsMap.get(sensor, None)
             if instance:
                 res[sensor] = instance.status()
-        logger.debug(f"Get the sensor data: {sensors}")
+        # logger.debug(f"Get the sensor data: {sensors}")
         return res
 
     def __set_start_up(self, startup: bool) -> None:
@@ -254,7 +254,8 @@ class HardwareMonitorAPI(UIAPIBase):
                 if not imgSrc:
                     continue
                 img = image_from_base64(imgSrc)
-                img = img.rotate(self.__rotation, expand=True)
+                if self.__lcd.unique_id() != lcd_virtual_screen.unique_id():
+                    img = img.rotate(self.__rotation, expand=True)
                 # Display the image
                 with DisplayLock:
                     # Pessimistic lock to prevent UI thread blocking

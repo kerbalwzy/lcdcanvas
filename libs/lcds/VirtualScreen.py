@@ -14,10 +14,12 @@ class LCD_VirtualScreen(LCD):
     def __init__(self):
         self.__window = None
 
-    def unique_id(self) -> str:
+    @classmethod
+    def unique_id(cls) -> str:
         return "VirtualScreen"
 
-    def is_connected(self) -> bool:
+    @classmethod
+    def is_connected(cls) -> bool:
         # not support, always return True
         return True
 
@@ -63,13 +65,13 @@ class LCD_VirtualScreen(LCD):
             logger.debug("Hide ThemePlayer window from the taskbar")
 
         if self.__window.width != img.width or self.__window.height != img.height:
+            logger.debug(f"Resize ThemePlayer window to {img.width}x{img.height}")
             self.__window.resize(img.width, img.height)
 
         if self.__window.hidden:
             self.__window.show()
             self.__window.hidden = False
             logger.debug("Show ThemePlayer window")
-            
 
     def clear(self) -> None:
         # not support

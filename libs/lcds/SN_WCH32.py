@@ -77,6 +77,7 @@ class LCD_SN_WCH32(LCD):
             return
         if hasattr(self.device, "_ctx"):
             try:
+                self.clear()
                 self.device.reset()
             except Exception as e:
                 pass
