@@ -47,6 +47,9 @@ import psutil
 from statistics import mean
 from typing import Union
 from app.consts import LHM_LHMONITOR_DLL_PATH, LHM_HIDSHARP_DLL_PATH
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 
 # Import LibreHardwareMonitor dll to Python
@@ -613,6 +616,24 @@ class Weather:
         return res
 
 
+# Volume
+class Volume:
+    def load(self) -> float:
+        # Get the default audio device
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        # Get the main volume level (range 0.0 to 1.0)
+        current_volume = volume.GetMasterVolumeLevelScalar()
+        return round(current_volume, 2)
+
+    def status(self) -> dict:
+        res = {
+            "load": self.load(),
+        }
+        return res
+
+
 # All sensors
 cpu = CPU()
 gpu = GPU()
@@ -620,6 +641,7 @@ ram = RAM()
 disk = Disk()
 net = Net()
 weather = Weather()
+volume = Volume()
 SensorsMap = {
     "cpu": cpu,
     "gpu": gpu,
@@ -627,4 +649,5 @@ SensorsMap = {
     "disk": disk,
     "net": net,
     "weather": weather,
+    "volume": volume,
 }
