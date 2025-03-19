@@ -1,4 +1,4 @@
-# LCD CANVAS —— 轻松的在你的LCD副屏上绘制内容
+# LCD CANVAS —— 轻松在你的LCD副屏上绘制内容
 
 ### [English](./README_en.md)
 
@@ -24,7 +24,7 @@
 | 序列号 | 尺寸 | 分辨率 | 代码 | 制造商 | 授权协议 |
 | --- | --- | --- | --- | --- | --- |
 | VirtulScreen | 无限制 | 跟随主题 | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
-| WCH32 | 3.5 | 480x320 | [SN_WCH32.py](./libs/lcds/SN_WCH32.py) | <a href="http://www.qdtft.com/" target="_blank">全动电子</a> | - |
+
 
 ## 使用方法:
 

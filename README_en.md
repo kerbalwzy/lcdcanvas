@@ -1,4 +1,4 @@
-# LCD CANVAS —— Easily Draw Content on Your LCD Secondary Screen
+# LCD CANVAS —— Easily Draw On Your LCD Secondary Screen
 
 ### [中文](./README.md)
 
@@ -22,7 +22,6 @@ If you are an LCD secondary screen manufacturer and would like this open-source 
 | Serial No. | Size | Resolution | Code | Manufacturer | License |
 | --- | --- | --- | --- | --- | --- |
 | VirtulScreen | Unlimited | Follow The Theme | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
-| WCH32 | 3.5 | 480x320 | [SN_WCH32.py](./libs/lcds/SN_WCH32.py) | <a href="http://www.qdtft.com/" target="_blank">QDTFT</a> | - |
 
 ## Usage:
 
