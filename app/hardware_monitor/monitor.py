@@ -18,7 +18,7 @@ from app.setting import settings
 from app.ui import UIWindowManager
 from app.util import del_win_startup, image_from_base64, set_win_startup
 from app.hardware_monitor.sensors import SensorsMap, weather
-from libs.lcds import LCD, SUPPORT_SCREENS_MAP, lcd_virtual_screen
+from libs.lcds import LCD, find_connected_screens, lcd_virtual_screen
 
 __all__ = ["hardware_monitor_api"]
 
@@ -34,6 +34,7 @@ class HardwareMonitorAPI(UIAPIBase):
         self.__brightness = 100
         self.__rotation = 0
         self.__display = False
+        self.__connected_screens = dict()
 
     def __del__(self) -> None:
         if self.__lcd:
@@ -46,11 +47,18 @@ class HardwareMonitorAPI(UIAPIBase):
         """
         Get the list of available devices.
         """
+        self.__connected_screens = find_connected_screens()
         res = list()
-        for v in SUPPORT_SCREENS_MAP.values():
-            v: LCD
-            if v.is_connected():
-                res.append(v.unique_id())
+        for uid, screen in self.__connected_screens.items():
+            uid: str
+            screen: LCD
+            res.append(
+                {
+                    "uid": uid,
+                    "width": screen.width,
+                    "height": screen.height,
+                }
+            )
         logger.debug(f"Get the list of available screens")
         return res
 
@@ -76,11 +84,14 @@ class HardwareMonitorAPI(UIAPIBase):
             fp.write(content)
         self.showinfo(t("msg.ThemeFileImportSuccess"))
 
-    def selectScreen(self, screen: str) -> bool:
+    def selectScreen(self, uid: str) -> bool:
         # try to match a screen driver
-        driver = SUPPORT_SCREENS_MAP.get(screen, None)
+        driver = self.__connected_screens.get(uid, None)
         with DisplayLock:
             if self.__lcd is not None:
+                if self.__lcd.unique_id() == uid:
+                    # If the same screen is selected, do nothing.
+                    return True
                 # Close the prev screen dirver
                 try:
                     self.__lcd.close()
@@ -90,16 +101,16 @@ class HardwareMonitorAPI(UIAPIBase):
             self.__lcd = driver
         # If selected screen, update the screen settings
         if self.__lcd:
-            screen_settings = settings.get_screen_settings(screen)
+            screen_settings = settings.get_screen_settings(uid)
             # Initialize the screen brightness and rotation angle.
             self.__brightness = screen_settings.get("brightness", 100)
             self.__rotation = screen_settings.get("rotation", 0)
             self.__set_brightness()
-            logger.debug(f"Screen <{screen}> selected")
+            logger.debug(f"Screen <{uid}> selected")
         else:
             logger.debug(f"Screen selected clean")
         # Update monitor settings
-        settings.set_monitor_settings({"lastScreen": screen if driver else ""})
+        settings.set_monitor_settings({"lastScreen": uid if driver else ""})
         return self.__lcd is not None
 
     def selectTheme(self, theme: str) -> str:

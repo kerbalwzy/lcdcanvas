@@ -21,9 +21,10 @@
 <a href="mailto:kerbalwzy@gmail.com?subject=LCDCANVS定制开发" target="_blank">kerbalwzy@gmail.com</a>
 如果您具有开发能力, 可以Fork本项目后, 自己实现屏幕的适配功能, 并提交PR到本项目中。
 
-| 序列号 | 尺寸 | 分辨率 | 代码 | 制造商 | 授权协议 |
-| --- | --- | --- | --- | --- | --- |
-| VirtulScreen | 无限制 | 跟随主题 | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
+| 序列号 | 尺寸 | 分辨率 | 代码 | 制造商 | 授权协议 | 其它说明 |
+| --- | --- | --- | --- | --- | --- | --- |
+| VirtualScreen | 跟随主题 | | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | | | 在桌面上创建的虚拟屏幕
+| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | 操作系统能直接识别的副显示器 |
 
 
 ## 使用方法:

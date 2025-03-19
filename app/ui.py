@@ -28,11 +28,19 @@ class UIWindowManager:
 
         from app.hardware_monitor.monitor import hardware_monitor_api
 
+        main_screen = webview.screens[0]
+        window_width = 1024
+        window_height = 666
+        # Center the window on the main screen
+        x = (main_screen.width - window_width) // 2
+        y = (main_screen.height - window_height) // 2
         window = webview.create_window(
             title=t("label.HardwareMonitor"),
             url=consts.UI_MONITOR_URL,
-            width=1024,
-            height=666,
+            width=window_width,
+            height=window_height,
+            x=x,
+            y=y,
             js_api=hardware_monitor_api,
             resizable=False,
         )

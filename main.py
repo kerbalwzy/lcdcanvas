@@ -1,11 +1,18 @@
-import locale
 import logging
+
+# Upgrade logging level for some modules
+logging.getLogger("comtypes._post_coinit.unknwn").setLevel(logging.ERROR)
+logging.getLogger("PIL").setLevel(logging.ERROR)
+logging.getLogger("pywebview").setLevel(logging.ERROR)
+
+
+import locale
 import threading
 import win32gui  # type: ignore
 import webview
 
 from logging.handlers import RotatingFileHandler
-from app.consts import  LOG_PATH, LOG_LEVEL,APP_NAME, LOGO_PATH, IS_EXE
+from app.consts import LOG_PATH, LOG_LEVEL, APP_NAME, LOGO_PATH, IS_EXE
 from app.systray import SysTrayIcon
 from app.ui import UIWindowManager
 from app.util import (
@@ -13,6 +20,7 @@ from app.util import (
     require_runas_unique,
     copy_theme_to_user_dir,
 )
+
 
 # global logger configuration
 # use current locale for date/time formatting in logs
@@ -55,9 +63,9 @@ def main():
     ).start()
     # Start UI
     webview.start(
-        func=UIWindowManager.hw_monitor_window, debug=not IS_EXE, gui="edgechromium"
+        func=UIWindowManager.hw_monitor_window, debug=False, gui="edgechromium"
     )
+
 
 if __name__ == "__main__":
     main()
-

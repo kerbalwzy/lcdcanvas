@@ -99,10 +99,6 @@ def require_runas_unique():
                 logger.warning(f"Killed same name process with PID: {pid}")
 
 
-# Set the log level of PIL to WARNING
-logging.getLogger("PIL").setLevel(logging.WARNING)
-
-
 def image_from_base64(base64_str: str) -> ImageFile.ImageFile:
     """
     Convert a base64 string to an image.

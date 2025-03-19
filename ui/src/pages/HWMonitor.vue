@@ -53,6 +53,8 @@
                 density="compact"
                 :label="t('label.Screen')"
                 :items="screens"
+                item-title="uid"
+                item-value="uid"
                 :loading="!monitorSettings.lastScreen"
                 :rules="[formRuleRequire]"
                 :no-data-text="t('label.NoScreen')"
@@ -73,6 +75,12 @@
                 </template>
                 <template v-slot:append>
                   <LanguageBtn></LanguageBtn>
+                </template>
+                <template v-slot:item="{ props: itemProps, item }">
+                  <v-list-item
+                    v-bind="itemProps"
+                    :subtitle="`${item.raw.width} x ${item.raw.height}`"
+                  ></v-list-item>
                 </template>
               </v-select>
               <v-select
@@ -248,6 +256,12 @@ import { throttle } from "@/plugins/utils";
 import { ThemePlayer } from "@/model/themePlayer.m";
 import { DEFAULT_CANVAS_META } from "@/consts/theme.c";
 import LanguageBtn from "@/components/LanguageBtn.vue";
+interface Screen {
+  uid: string;
+  width: number;
+  height: number;
+}
+
 const { t, locale } = useI18n();
 const showPage = ref(false);
 const settingForm = ref();
@@ -255,7 +269,7 @@ const displayStateUpdating = ref(false);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const player = ref<ThemePlayer | null>(null);
 const formRuleRequire = (v: any) => !!v || t("msg.Required");
-const screens = reactive<string[]>([]);
+const screens = reactive<Screen[]>([]);
 const themes = reactive<string[]>([]);
 const themeMeta = reactive<{ [key: string]: any }>({});
 const sensors = ref<string[]>([]);
@@ -414,10 +428,7 @@ let themePreviewT: any = null;
 
 const startThemePreview = () => {
   themePreviewT = setInterval(() => {
-    if (
-      !player.value ||
-      !screenSettings.lastTheme
-    ) {
+    if (!player.value || !screenSettings.lastTheme) {
       return;
     }
     pywebview.api.getSensorsValue(sensors.value).then((res: any) => {
@@ -470,7 +481,8 @@ window.addEventListener("pywebviewready", function () {
         };
         Object.assign(monitorSettings.weather, res.weather);
         // If the last screen is in the screens list, select it
-        if (screens.includes(monitorSettings.lastScreen)) {
+        const screen_uids = screens.map((screen) => screen.uid);
+        if (screen_uids.includes(monitorSettings.lastScreen)) {
           selectScreen(monitorSettings.lastScreen);
         } else {
           selectScreen("");

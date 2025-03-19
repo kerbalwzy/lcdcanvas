@@ -19,9 +19,10 @@ This is an open source project for LCD secondary screen host software. Its main 
 
 If you are an LCD secondary screen manufacturer and would like this open-source project to support your screen or wish to customize a private version, you can contact [kerbalwzy@gmail.com](mailto:kerbalwzy@gmail.com?subject=LCDCANVS%20Custom%20Development). If you have development skills, you can fork this project, implement screen compatibility yourself, and submit a PR to this project.
 
-| Serial No. | Size | Resolution | Code | Manufacturer | License |
-| --- | --- | --- | --- | --- | --- |
-| VirtulScreen | Unlimited | Follow The Theme | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | - | - |
+| Serial No. | Size | Resolution | Code | Manufacturer | Authorization Agreement | Other Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| VirtualScreen | Follows theme | | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | | | Virtual screen created on desktop |
+| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | Secondary display directly recognized by the operating system |
 
 ## Usage:
 

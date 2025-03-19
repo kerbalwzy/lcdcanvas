@@ -618,8 +618,6 @@ class Weather:
 
 # Volume
 class Volume:
-    _logger = logging.getLogger("comtypes._post_coinit.unknwn")
-    _logger.setLevel(logging.ERROR)
 
     def load(self) -> float:
         # Get the default audio device
