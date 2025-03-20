@@ -64,7 +64,7 @@ class HardwareMonitorAPI(UIAPIBase):
 
     def loadThemes(self) -> List[str]:
         filenames = [
-            filename.rstrip(".json")
+            filename[:-5]
             for filename in os.listdir(consts.THEMES_DIR)
             if filename.endswith(".json")
         ]

@@ -35,6 +35,7 @@ declare interface CanvasMeta {
   height: number;
   radius: number;
   canvasJSON?: any; // The json data of the fabricjs cavans
+  customFonts?: { [fontFamily: string]: string } = {}; // Custom fonts, key is fontFamily, value is fontDataHex
 }
 
 declare interface SensorData extends Map<string, any> {

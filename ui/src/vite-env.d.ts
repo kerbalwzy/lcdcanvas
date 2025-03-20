@@ -7,3 +7,7 @@ declare module "*.vue" {
 }
 
 declare const pywebview: any;
+
+declare interface FontFaceSet {
+  add(font: FontFace): void;
+}

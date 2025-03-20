@@ -130,3 +130,21 @@ export function sleep(ms: number): void {
     // do nothing
   }
 }
+
+// ArrayBuffer to Hexadecimal string
+export function arrayBufferToHex(buffer: ArrayBuffer): string {
+  const uint8Array = new Uint8Array(buffer);
+  return Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// Hexadecimal string to ArrayBuffer
+export function hexToArrayBuffer(hex: string): ArrayBuffer {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
+  }
+  return bytes.buffer;
+}
+

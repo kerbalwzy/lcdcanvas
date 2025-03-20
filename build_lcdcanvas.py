@@ -23,7 +23,7 @@ nuitka_command = [
     # add dlls, must be specified file
     "--include-data-files=libs/lhm/LibreHardwareMonitorLib.dll=libs/lhm/LibreHardwareMonitorLib.dll",  
     "--include-data-files=libs/lhm/HidSharp.dll=libs/lhm/HidSharp.dll", 
-    "--include-data-files=themes/DemoTheme.json=themes/DemoTheme.json",
+    "--include-data-files=themes/lcdcanvas.json=themes/lcdcanvas.json",
     # add data dirs
     "--include-data-dir=libs/lhm=libs/lhm",
     "--include-data-dir=static=static",

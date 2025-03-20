@@ -176,6 +176,6 @@ absolute/
 static/
 scripts/
 themes/
-!themes/DemoTheme.json
+!themes/lcdcanvas.json
 
 

@@ -1,11 +1,11 @@
 import { SUPPORT_FONTS, WEATHER_ICON_FILEPATH_MAP } from "@/consts/theme.c";
 import { fabric } from "fabric";
-import { markRaw } from "vue";
+import { markRaw, reactive } from "vue";
 import { fabricGif } from "@/model/fabricGIF";
-import { formatDate, formatTime } from "@/plugins";
+import { formatDate, formatTime, hexToArrayBuffer } from "@/plugins";
 import i18n from "@/plugins/i18n";
-
 const { t } = i18n.global;
+const CustomFonts = reactive<{ [fontFamily: string]: string }>({});
 
 export class ThemePlayer {
   private tooltip: fabric.Text;
@@ -184,6 +184,22 @@ export class ThemePlayer {
           obj.src = WEATHER_ICON_FILEPATH_MAP[data.value];
         }
       });
+    }
+    // load the custom fonts
+    if (meta.customFonts) {
+      for (const [fontFamily, fontDataHex] of Object.entries(
+        meta.customFonts
+      )) {
+        // check if the font is already loaded
+        if (CustomFonts[fontFamily]) continue;
+        // load the font
+        const fontData = hexToArrayBuffer(fontDataHex);
+        const font = new FontFace(fontFamily, fontData);
+        document.fonts.add(font);
+        CustomFonts[fontFamily] = fontDataHex;
+      }
+      // remove the customFonts from meta
+      delete meta.customFonts;
     }
     this.fromCanvasMeta(meta);
   }
