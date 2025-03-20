@@ -1,11 +1,8 @@
 <template>
   <v-container v-show="showPage" fluid>
-    <div
-      class="d-flex flex-wrap justify-center align-center"
-      style="height: 100%"
-    >
-      <div class="align-self-stretch" style="flex-grow: 1">
-        <v-card flat style="height: 100%">
+    <div class="d-flex justify-space-around align-center" style="height: 100%">
+      <div class="align-self-stretch" style="width: 600px">
+        <v-card flat>
           <v-card-subtitle>{{ t("label.Preview") }}</v-card-subtitle>
           <div v-if="screenSettings.lastTheme" class="d-flex align-center mb-2">
             <v-tooltip :text="t('label.ThemeName')" location="bottom">
@@ -40,10 +37,7 @@
           </div>
         </v-card>
       </div>
-      <div
-        class="align-self-stretch"
-        style="max-width: 500px; min-width: 300px"
-      >
+      <div class="align-self-stretch" style="width: 350px">
         <v-card flat>
           <v-card-subtitle>{{ t("label.Setting") }}</v-card-subtitle>
           <v-form ref="settingForm" validate-on="lazy">
@@ -386,6 +380,7 @@ const selectTheme = (theme: string) => {
           player.value!.loadSensorsValue(res);
         });
         Object.assign(themeMeta, player.value!.meta);
+        setTimeout(resetPreview, 100);
       } catch (e) {
         console.error(e);
         pywebview.api.showerror(t("msg.InvalidThemeFile"));
@@ -450,12 +445,87 @@ declare global {
   }
 }
 
+const resetPreview = () => {
+  const canvas = canvasRef.value;
+  const wrapper = canvasRef.value?.parentElement;
+  if (canvas && wrapper) {
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const wrapperWidth = wrapper.offsetWidth;
+    const wrapperHeight = Math.min(wrapper.offsetHeight, 520);
+    // compute the scale factor to fit the canvas in the wrapper
+    const scaleX = wrapperWidth / canvasWidth;
+    const scaleY = wrapperHeight / canvasHeight;
+    const scale = Math.min(scaleX, scaleY);
+    // set scale and translate to center the canvas in the wrapper
+    wrapper.style.transform = `scale(${scale}) translate(0px, 0px)`;
+    wrapper.style.transformOrigin = "center center";
+  }
+};
+
 onMounted(() => {
   if (canvasRef.value) {
     player.value = new ThemePlayer(canvasRef.value, DEFAULT_CANVAS_META);
     window.flushDisplay = (display: 0 | 1) => {
       displayState.value = display === 1;
     };
+    // add wheel event listener to canvas wrapper
+    const wrapper = canvasRef.value.parentElement;
+    if (wrapper) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let translateX = 0;
+      let translateY = 0;
+
+      wrapper.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault();
+          const delta = event.deltaY;
+          const zoomFactor = 0.1;
+          const zoom = delta > 0 ? 1 - zoomFactor : 1 + zoomFactor;
+
+          const currentScale = parseFloat(
+            wrapper.style.transform.match(/scale\(([^)]+)\)/)?.[1] || "1"
+          );
+          const newScale = Math.max(0.5, Math.min(3, currentScale * zoom));
+
+          wrapper.style.transform = `scale(${newScale}) translate(${translateX}px, ${translateY}px)`;
+          wrapper.style.transformOrigin = "center center";
+        },
+        { passive: false }
+      );
+
+      wrapper.addEventListener("mousedown", (event) => {
+        isDragging = true;
+        startX = event.clientX - translateX;
+        startY = event.clientY - translateY;
+        wrapper.style.cursor = "grabbing";
+      });
+
+      wrapper.addEventListener("mousemove", (event) => {
+        if (isDragging) {
+          translateX = event.clientX - startX;
+          translateY = event.clientY - startY;
+
+          const currentScale = parseFloat(
+            wrapper.style.transform.match(/scale\(([^)]+)\)/)?.[1] || "1"
+          );
+          wrapper.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+        }
+      });
+
+      wrapper.addEventListener("mouseup", () => {
+        isDragging = false;
+        wrapper.style.cursor = "grab";
+      });
+
+      wrapper.addEventListener("mouseleave", () => {
+        isDragging = false;
+        wrapper.style.cursor = "grab";
+      });
+    }
   }
 });
 
@@ -512,13 +582,25 @@ window.addEventListener("pywebviewready", function () {
 
 <style scoped>
 .canvasWrapper {
-  width: 100%;
-  height: auto;
   padding: 20px;
-  background-color: rgba(109, 106, 106, 0.103);
   position: relative !important;
   pointer-events: auto;
+  background-color: #ccc;
   z-index: 1000;
-  overflow: auto;
+  overflow: hidden;
+  transform-origin: center center;
+  transition: transform 0.1s ease;
+  touch-action: none;
+  cursor: grab;
+  width: 100%;
+  height: 520px;
+}
+.canvasWrapper:active {
+  cursor: grabbing;
+}
+.canvas {
+  pointer-events: auto;
+  position: absolute !important;
+  display: block;
 }
 </style>

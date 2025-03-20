@@ -63,7 +63,7 @@ def main():
     ).start()
     # Start UI
     webview.start(
-        func=UIWindowManager.hw_monitor_window, debug=False, gui="edgechromium"
+        func=UIWindowManager.hw_monitor_window, debug=not IS_EXE, gui="edgechromium"
     )
 
 
