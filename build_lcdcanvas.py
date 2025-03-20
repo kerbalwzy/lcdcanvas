@@ -3,8 +3,8 @@ from app.consts import APP_NAME
 
 AppName = f"{APP_NAME}.exe"
 ProductName = r"LCD CANVAS"
-ProductVersion = r"1.0.0.2"
-FileVersion = r"1.0.0.2"
+ProductVersion = r"1.0.0.3"
+FileVersion = r"1.0.0.3"
 FileDescription = r"LCD CANVAS"
 CopyRight = r"Copyright (c) 2025 lcdcanvas.com"
 
