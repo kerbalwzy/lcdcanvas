@@ -350,9 +350,10 @@ const selectScreen = (screen: string) => {
       pywebview.api.getScreenSettings(screen).then((res: any) => {
         screenSettings.brightness = res.brightness || 100;
         screenSettings.rotation = res.rotation || 0;
-        screenSettings.lastTheme = res.lastTheme || "";
         // If the last theme is in the theme list, select it
-        if (themes.includes(screenSettings.lastTheme)) {
+        if (themes.includes(res.lastTheme)) {
+          selectTheme(res.lastTheme);
+        } else {
           selectTheme(screenSettings.lastTheme);
         }
       });
@@ -378,6 +379,7 @@ const selectTheme = (theme: string) => {
           player.value!.loadSensorsValue(res);
         });
         Object.assign(themeMeta, player.value!.meta);
+        screenSettings.lastTheme = theme;
         setTimeout(resetPreview, 100);
       } catch (e) {
         console.error(e);
