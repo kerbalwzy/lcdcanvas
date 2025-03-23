@@ -354,8 +354,6 @@ const selectScreen = (screen: string) => {
         // If the last theme is in the theme list, select it
         if (themes.includes(screenSettings.lastTheme)) {
           selectTheme(screenSettings.lastTheme);
-        } else {
-          selectTheme("");
         }
       });
     } else {
