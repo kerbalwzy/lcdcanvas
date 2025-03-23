@@ -1,26 +1,35 @@
 import logging
-
-# Upgrade logging level for some modules
-logging.getLogger("comtypes._post_coinit.unknwn").setLevel(logging.ERROR)
-logging.getLogger("PIL").setLevel(logging.ERROR)
-logging.getLogger("pywebview").setLevel(logging.ERROR)
-
-
 import locale
 import threading
+import traceback
 import win32gui  # type: ignore
+import win32api  # type: ignore
+import win32con  # type: ignore
 import webview
-
 from logging.handlers import RotatingFileHandler
-from app.consts import LOG_PATH, LOG_LEVEL, APP_NAME, LOGO_PATH, IS_EXE
-from app.systray import SysTrayIcon
-from app.ui import UIWindowManager
-from app.util import (
-    require_runas_admin,
-    require_runas_unique,
-    copy_theme_to_user_dir,
-)
 
+# Upgrade logging level for some modules
+logging.getLogger("PIL").setLevel(logging.ERROR)
+logging.getLogger("pywebview").setLevel(logging.ERROR)
+logging.getLogger("comtypes").setLevel(logging.ERROR)
+logging.getLogger("comtypes._post_coinit.unknwn").setLevel(logging.ERROR)
+logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
+
+# Import all app modules
+try:
+    from app.consts import LOG_PATH, LOG_LEVEL, APP_NAME, LOGO_PATH, IS_EXE
+    from app.systray import SysTrayIcon
+    from app.ui import UIWindowManager
+    from app.util import (
+        require_runas_admin,
+        require_runas_unique,
+        copy_theme_to_user_dir,
+    )
+
+except Exception as e:
+    stack_trace = traceback.format_exc()
+    win32api.MessageBox(0, stack_trace, "RuntimeEnvError", win32con.MB_ICONERROR)
+    exit(1)
 
 # global logger configuration
 # use current locale for date/time formatting in logs
@@ -63,7 +72,9 @@ def main():
     ).start()
     # Start UI
     webview.start(
-        func=UIWindowManager.hw_monitor_window, debug=not IS_EXE, gui="edgechromium"
+        func=UIWindowManager.hw_monitor_window,
+        debug=not IS_EXE,
+        # gui="edgechromium"
     )
 
 

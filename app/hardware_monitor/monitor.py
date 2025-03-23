@@ -191,7 +191,10 @@ class HardwareMonitorAPI(UIAPIBase):
         for sensor in sensors:
             instance = SensorsMap.get(sensor, None)
             if instance:
-                res[sensor] = instance.status()
+                try:
+                    res[sensor] = instance.status()
+                except Exception as e:
+                    logger.error(f"Sensor <{sensor}> error: {e}")
         # logger.debug(f"Get the sensor data: {sensors}")
         return res
 

@@ -33,6 +33,9 @@ Weather:
 
 Net:
     speed (upload, download): Upload speed (B/s), Download speed (B/s)
+
+Volume:
+    load: Utilization rate (%)
 """
 
 __all__ = ["cpu", "gpu", "ram", "disk", "net", "weather", "SensorsMap"]
@@ -47,9 +50,9 @@ import psutil
 from statistics import mean
 from typing import Union
 from app.consts import LHM_LHMONITOR_DLL_PATH, LHM_HIDSHARP_DLL_PATH
-from ctypes import cast, POINTER
-from comtypes import CLSCTX_ALL
+from comtypes import CLSCTX_ALL, CoInitialize, CoUninitialize
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from comtypes import POINTER, cast
 
 
 # Import LibreHardwareMonitor dll to Python
@@ -589,6 +592,8 @@ class Weather:
                 )
                 self.__icon = data["weather"][0]["icon"]
                 self.last_update = time.time()
+            except requests.exceptions.Timeout:
+                return
             except Exception as e:
                 logger.error(e)
             else:
@@ -618,20 +623,40 @@ class Weather:
 
 # Volume
 class Volume:
+    def __init__(self) -> None:
+        self.volume = None
+        try:
+            CoInitialize()
+            devices = AudioUtilities.GetSpeakers()
+            if not devices:
+                raise ValueError("No audio devices found")
+            interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            if not interface:
+                raise ValueError("Failed to activate IAudioEndpointVolume")
+            self.volume = cast(interface, POINTER(IAudioEndpointVolume))
+            if not self.volume:
+                raise ValueError("Failed to cast to IAudioEndpointVolume")
+        except Exception as e:
+            print(f"Error in __init__: {e}")
+            raise
+
+    def __del__(self):
+        self.cleanup()
+
+    def cleanup(self):
+        if hasattr(self, "volume") and self.volume:
+            self.volume.Release()
+            self.volume = None
+            CoUninitialize()
 
     def load(self) -> float:
-        # Get the default audio device
-        devices = AudioUtilities.GetSpeakers()
-        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-        volume = cast(interface, POINTER(IAudioEndpointVolume))
-        # Get the main volume level (range 0.0 to 1.0)
-        current_volume = volume.GetMasterVolumeLevelScalar()
+        if not self.volume:
+            raise RuntimeError("Volume interface not initialized")
+        current_volume = self.volume.GetMasterVolumeLevelScalar()
         return round(current_volume, 2)
 
     def status(self) -> dict:
-        res = {
-            "load": self.load(),
-        }
+        res = {"load": self.load()}
         return res
 
 

@@ -46,7 +46,10 @@ class ThemePlayerAPI(UIAPIBase):
             # Get the sensor instance from the SensorsMap
             instance = SensorsMap.get(sensor, None)
             if instance:
-                res[sensor] = instance.status()
+                try:
+                    res[sensor] = instance.status()
+                except Exception as e:
+                    logger.error(f"Sensor <{sensor}> error: {e}")
         # logger.debug(f"Theme player loaded sensor <{sensors}> data: {res}")
         return res
 
