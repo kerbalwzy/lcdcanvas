@@ -1,9 +1,9 @@
 [Setup]
 AppName=LCDCANVAS
-AppVersion=1.0.0.3
+AppVersion=1.0.0.4
 DefaultDirName={autopf}\LCDCANVAS
 OutputDir=dist
-OutputBaseFilename=lcdcanvas_1.0.0.3_Setup
+OutputBaseFilename=lcdcanvas_1.0.0.4_Setup
 SetupIconFile=static\favicon.ico
 PrivilegesRequired=admin
 
@@ -13,8 +13,8 @@ Source: "build\main.dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdi
 [Icons]
 Name: "{commondesktop}\LCDCANVAS"; Filename: "{app}\LCDCANVAS.exe"; IconFilename: "{app}\static\favicon.ico"
 
-[Run]
-Filename: "{app}\LCDCANVAS.exe"; Description: "Startup"; Flags: shellexec postinstall nowait
+//[Run]
+//Filename: "{app}\LCDCANVAS.exe"; Description: "Startup"; Flags: shellexec postinstall nowait
 
 [Code]
 
