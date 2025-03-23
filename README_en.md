@@ -7,7 +7,7 @@
 
 ## Introduction:
 
-This is an open source project for LCD secondary screen host software. Its main function is to control the LCD screen display content connected via USB. Currently it only supports running on Windows platform, supporting win7/win8/win10/win11. The software interface supports bilingual switching between Chinese and English and includes a built-in virtual screen to simulate display content on the desktop. Theme files can be freely created and edited online at 
+This is an open source project for LCD secondary screen host software. Its main function is to control the LCD screen display content connected via USB. Currently it only supports running on Windows platform, supporting win7/win8/win10/win11, The software interface supports bilingual switching between Chinese and English. Theme files can be freely created and edited online at 
 <a href="https://lcdcanvas.com/themeeditor" target="_blank">lcdcanvas.com</a>
 , saved as JSON files locally, and then imported into the host software for use.
 
@@ -22,7 +22,7 @@ If you are an LCD secondary screen manufacturer and would like this open-source 
 | Serial No. | Size | Resolution | Code | Manufacturer | Authorization Agreement | Other Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | VirtualScreen | Follows theme | | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | | | Virtual screen created on desktop |
-| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | Secondary display directly recognized by the operating system |
+| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | Secondary display directly recognized by the operating system (eg. the second display connected through HDMI or DP interface) |
 
 ## Usage:
 
@@ -52,7 +52,8 @@ If you are an LCD secondary screen manufacturer and would like this open-source 
 ## Features:
 
 - Supports bilingual switching between Chinese and English (weather descriptions will also follow the language switch)
-- Built-in virtual screen for simulating display content on the desktop, with no size limit and resolution following the theme
+- VirtualScreen, for simulating display content on the desktop, with no size limit and resolution following the theme
+- 2ndScreen #N, for directly recognizing the secondary display (eg. the second display connected through HDMI or DP interface) connected to the computer, with no size limit and resolution following the theme
 - Supports hot-switching of screens, themes, real-time adjustment of brightness, rotation angle, etc. after turning on the display, without the need to restart
 - Obtain weather information for any location through latitude and longitude, and supports setting your private API Key
 - Left-click the tray icon to open the main window, right-click to open the menu options

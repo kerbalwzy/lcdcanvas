@@ -3,11 +3,11 @@
 ### [English](./README_en.md)
 
 ![Static Badge](https://img.shields.io/badge/Python-3.8.10-blue?style=for-the-badge)
-![Static Badge](https://img.shields.io/badge/Windows-7/8/10/11-blue?style=for-the-badge)
+![Static Badge](https://img.shields.io/badge/Windows-7/10/11-blue?style=for-the-badge)
 
 ## 简介:
 
-这是一个LCD副屏上位机软件开源项目，主要功能是控制通过USB连接的LCD屏幕显示内容。目前仅支持在Windows平台上运行, 支持win7/win8/win10/win11。软件界面支持中英文双语切换, 并在软件内置了一个虚拟屏幕, 用于在桌面上模拟显示内容。主题文件可以前往
+这是一个LCD副屏上位机软件开源项目，主要功能是控制通过USB连接的LCD屏幕显示内容。目前仅支持在Windows平台上运行, 支持win7/win8/win10/win11, 软件界面支持中英文双语。切换主题文件可以前往
 <a href="https://lcdcanvas.com/themeeditor" target="_blank">lcdcanvas.com</a>
 自由的在线创建与编辑, 保存为JSON文件到本地后导入到上位机软件中使用。
 
@@ -24,7 +24,7 @@
 | 序列号 | 尺寸 | 分辨率 | 代码 | 制造商 | 授权协议 | 其它说明 |
 | --- | --- | --- | --- | --- | --- | --- |
 | VirtualScreen | 跟随主题 | | [VirtualScreen.py](./libs/lcds/VirtualScreen.py) | | | 在桌面上创建的虚拟屏幕
-| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | 操作系统能直接识别的副显示器 |
+| 2ndScreen #N | | | [SecondScreen.py](./libs/lcds/SecondScreen.py)| | | 操作系统能直接识别的副显示器(例如通过HDMI或DP接口连接的第二个显示器) |
 
 
 ## 使用方法:
@@ -55,7 +55,8 @@
 ## 功能特点:
 
 - 支持中英文双语切换(天气的文本描述, 也会跟随语言切换)
-- 内置虚拟屏幕, 用于在桌面上模拟显示内容, 虚拟屏幕没有尺寸限制, 分辨率跟随主题
+- VirtualScreen, 用于在桌面上模拟显示内容, 虚拟屏幕没有尺寸限制, 分辨率跟随主题
+- 2ndScreen #N, 用于在操作系统能直接识别的副显示器(例如通过HDMI或DP接口连接的第二个显示器)上显示内容, 分辨率由屏幕本身决定.
 - 支持在开启屏显后热切换屏幕, 主题, 实时调整亮度, 旋转角度等, 无需重启
 - 通过经纬度获取任意地点天气信息, 并支持您设置私有的API Key
 - 托盘图标左键单击打开主页窗口, 右键单击打开菜单选项
