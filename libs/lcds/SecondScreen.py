@@ -129,8 +129,10 @@ def find_2nd_screen() -> List[LCD_2ndScreen]:
     if len(screens) == 1:
         return []
     res = []
-    # exclude the first screen, it is the primary screen
-    for i, s in enumerate(screens[1:]):
+    for i, s in enumerate(screens):
+        # exclude the primary screen
+        if s.x == s.y == 0:
+            continue
         cache_key = f"{s.width}-{s.height}-{s.x}-{s.y}"
         cache_screen = __2nd_screen_cache.get(cache_key, None)
         if cache_screen is None:
