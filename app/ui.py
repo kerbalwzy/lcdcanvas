@@ -28,9 +28,12 @@ class UIWindowManager:
 
         from app.hardware_monitor.monitor import hardware_monitor_api
 
-        main_screen = webview.screens[0]
+        main_screen = next(
+            (s for s in webview.screens if bool(s.x == s.y == 0)), webview.screens[0]
+        )
         window_width = 1024
         window_height = 666
+        logger.debug(f"Main screen: {main_screen}")
         # Center the window on the main screen
         x = (main_screen.width - window_width) // 2
         y = (main_screen.height - window_height) // 2
