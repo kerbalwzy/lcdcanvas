@@ -7,6 +7,7 @@ export const zh = {
     ScreenRadius: "屏幕半径",
     Theme: "主题",
     ThemeName: "主题名称",
+    ThemePixel: "主题像素",
     Brightness: "亮度",
     Rotation: "旋转",
     StartDisplay: "开启屏显",

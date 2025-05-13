@@ -6,6 +6,7 @@ Configure the hardware monitor:
 4. Set the screen display rotation angle.
 """
 
+import json
 import logging
 import os
 import threading
@@ -62,15 +63,24 @@ class HardwareMonitorAPI(UIAPIBase):
         logger.debug(f"Get the list of available screens")
         return res
 
-    def loadThemes(self) -> List[str]:
-        filenames = [
-            filename[:-5]
-            for filename in os.listdir(consts.THEMES_DIR)
-            if filename.endswith(".json")
-        ]
-        filenames.sort()
+    def loadThemes(self) -> List[dict]:
+        res  = list()
+        for filename in os.listdir(consts.THEMES_DIR):
+            if not filename.endswith(".json"):
+                continue
+            item = dict()
+            item["name"] = filename[:-5]
+            filepath: str = os.path.join(consts.THEMES_DIR, filename)
+            with open(filepath, "r", encoding="utf-8") as fp:
+                _theme = json.load(fp)
+                item["shape"] = _theme["shape"]
+                item["width"] = _theme.get("width", 0)
+                item["height"] = _theme.get("height", 0)
+                item["radius"] = _theme.get("radius", 0)
+            res.append(item)
+        res.sort(key=lambda x: x["name"])
         logger.debug(f"Get the list of available themes")
-        return filenames
+        return res
 
     def importTheme(self, content: str, filename: str) -> None:
         savepath = os.path.join(consts.THEMES_DIR, filename)

@@ -7,6 +7,7 @@ export const en = {
     ScreenRadius: "Screen Radius",
     Theme: "Theme",
     ThemeName: "Theme Name",
+    ThemePixel: "Theme Pixel",
     Brightness: "Brightness",
     Rotation: "Rotation",
     StartDisplay: "Start Display",

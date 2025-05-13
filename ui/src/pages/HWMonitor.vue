@@ -13,22 +13,18 @@
               </template>
             </v-tooltip>
             <v-spacer></v-spacer>
-            <v-tooltip
-              v-if="themeMeta.shape == 'rect'"
-              :text="t('label.ScreenSize')"
-              location="bottom"
-            >
+            <v-tooltip :text="t('label.ThemePixel')" location="bottom">
               <template v-slot:activator="{ props }">
-                <v-chip v-bind="props" color="primary">
-                  {{ themeMeta.width }} X {{ themeMeta.height }}
+                <v-chip
+                  v-if="themeSelected.shape == 'rect'"
+                  v-bind="props"
+                  color="primary"
+                >
+                  {{ themeSelected.width }} X {{ themeSelected.height }}
                 </v-chip>
-              </template>
-            </v-tooltip>
-            <v-tooltip v-else :text="t('label.ScreenRadius')" location="bottom">
-              <template v-slot:activator="{ props }">
-                <v-chip v-bind="props" color="primary">{{
-                  themeMeta.raduis
-                }}</v-chip>
+                <v-chip v-else v-bind="props" color="primary">
+                  {{ themeSelected.radius }} X {{ themeSelected.radius }}
+                </v-chip>
               </template>
             </v-tooltip>
           </div>
@@ -82,6 +78,8 @@
                 density="compact"
                 :label="t('label.Theme')"
                 :items="themes"
+                item-title="name"
+                item-value="name"
                 :loading="!screenSettings.lastTheme"
                 :rules="[formRuleRequire]"
                 :no-data-text="t('label.NoTheme')"
@@ -250,10 +248,19 @@ import { throttle } from "@/plugins/utils";
 import { ThemePlayer } from "@/model/themePlayer.m";
 import { DEFAULT_CANVAS_META } from "@/consts/theme.c";
 import LanguageBtn from "@/components/LanguageBtn.vue";
+
 interface Screen {
   uid: string;
   width: number;
   height: number;
+}
+
+interface Theme {
+  name: string;
+  shape: string; // rect or circle
+  width: number;
+  height: number;
+  radius: number;
 }
 
 const { t, locale } = useI18n();
@@ -264,8 +271,8 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const player = ref<ThemePlayer | null>(null);
 const formRuleRequire = (v: any) => !!v || t("msg.Required");
 const screens = reactive<Screen[]>([]);
-const themes = reactive<string[]>([]);
-const themeMeta = reactive<{ [key: string]: any }>({});
+const themes = reactive<Theme[]>([]);
+const themeSelected = reactive<{ [key: string]: any }>({});
 const sensors = ref<string[]>([]);
 const monitorSettings = reactive({
   lang: "",
@@ -351,16 +358,40 @@ const selectScreen = (screen: string) => {
         screenSettings.brightness = res.brightness || 100;
         screenSettings.rotation = res.rotation || 0;
         // If the last theme is in the theme list, select it
-        if (themes.includes(res.lastTheme)) {
+        if (res.lastTheme && themes.find((t) => t.name == res.lastTheme)) {
           selectTheme(res.lastTheme);
         } else {
-          selectTheme(screenSettings.lastTheme);
+          // chose the first theme that suit for the screen
+          autoSelectTheme(screen);
         }
       });
     } else {
       monitorSettings.lastScreen = "";
     }
   });
+};
+
+// Auto select the first theme that suit for the screen
+const autoSelectTheme = (screen: string) => {
+  let screenItem = screens.find((s) => s.uid == screen) || {
+    width: 0,
+    height: 0,
+  };
+  let screenSize = [screenItem.width, screenItem.height];
+  screenSize.sort((a, b) => a - b);
+  if (screenItem.width && screenItem.height) {
+    for (const themeItem of themes) {
+      let themeSize = [themeItem.width, themeItem.height];
+      if (themeItem.shape == "circle") {
+        themeSize = [themeItem.radius, themeItem.radius];
+      }
+      themeSize.sort((a, b) => a - b);
+      if (screenSize[0] == themeSize[0] && screenSize[1] == themeSize[1]) {
+        selectTheme(themeItem.name);
+        break;
+      }
+    }
+  }
 };
 
 const selectTheme = (theme: string) => {
@@ -378,7 +409,7 @@ const selectTheme = (theme: string) => {
         pywebview.api.getSensorsValue(sensors.value).then((res: any) => {
           player.value!.loadSensorsValue(res);
         });
-        Object.assign(themeMeta, player.value!.meta);
+        Object.assign(themeSelected, player.value!.meta);
         screenSettings.lastTheme = theme;
         setTimeout(resetPreview, 100);
       } catch (e) {
