@@ -64,7 +64,7 @@ class HardwareMonitorAPI(UIAPIBase):
         return res
 
     def loadThemes(self) -> List[dict]:
-        res  = list()
+        res = list()
         for filename in os.listdir(consts.THEMES_DIR):
             if not filename.endswith(".json"):
                 continue
@@ -93,6 +93,12 @@ class HardwareMonitorAPI(UIAPIBase):
         with open(savepath, "w", encoding="utf-8") as fp:
             fp.write(content)
         self.showinfo(t("msg.ThemeFileImportSuccess"))
+
+    def deleteTheme(self, filename: str) -> None:
+        savepath = os.path.join(consts.THEMES_DIR, f"{filename}.json")
+        if os.path.exists(savepath):
+            os.remove(savepath)
+            self.showinfo(t("msg.ThemeFileDeleteSuccess"))
 
     def selectScreen(self, uid: str) -> bool:
         # try to match a screen driver

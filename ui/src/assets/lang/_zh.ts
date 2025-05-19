@@ -49,6 +49,7 @@ export const zh = {
     CustomText: "自定义文字",
     CustomImage: "自定义图片",
     WatherFakeValue: "晴\n25°C",
+    Remove : "删除",
   },
   msg: {
     Required: "必填",

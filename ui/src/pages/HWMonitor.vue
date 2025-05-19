@@ -98,6 +98,29 @@
                     </template>
                   </v-tooltip>
                 </template>
+                <template v-slot:item="{ props: itemProps, item }">
+                  <v-list-item v-bind="itemProps">
+                    <template v-slot:subtitle>
+                      {{
+                        item.raw.shape == "rect"
+                          ? `${item.raw.width} x ${item.raw.height}`
+                          : `${item.raw.radius} x ${item.raw.radius}`
+                      }}
+                    </template>
+                    <template
+                      v-if="screenSettings.lastTheme != item.raw.name"
+                      v-slot:append
+                    >
+                      <v-btn
+                        size="x-small"
+                        color="red-lighten-1"
+                        variant="tonal"
+                        @click.stop="deleteTheme(item.raw.name)"
+                        >{{ t("label.Remove") }}</v-btn
+                      >
+                    </template>
+                  </v-list-item>
+                </template>
                 <template v-slot:append>
                   <v-tooltip :text="t('label.ImportTheme')">
                     <template v-slot:activator="{ props }">
@@ -345,6 +368,12 @@ const importTheme = throttle(() => {
   };
   input.click();
 }, 1000);
+
+const deleteTheme = (theme: string) => {
+  pywebview.api.deleteTheme(theme).then(() => {
+    loadThemes();
+  });
+};
 
 const selectScreen = (screen: string) => {
   if (!screen) {

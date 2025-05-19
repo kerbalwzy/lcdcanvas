@@ -49,6 +49,7 @@ export const en = {
     CustomText: "Custom Text",
     CustomImage: "Custom Image",
     WatherFakeValue: "Sunny\n25°C",
+    Remove : "Remove",
   },
   msg: {
     Required: "Required",

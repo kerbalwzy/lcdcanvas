@@ -71,6 +71,7 @@ t = I18n(
             "msg": {
                 "ThemeFileNotFound": "主题文件不存在",
                 "ThemeFileImportSuccess": "主题文件导入成功",
+                "ThemeFileDeleteSuccess": "主题文件删除成功",
                 "FirstRunNeedAdmin": "首次运行请以管理员权限启动",
                 "ThemeFileLoadFailed": "主题文件加载失败, 请选择有效的主题文件",
                 "BrightnessSetFailed": "设置屏幕亮度失败, 请尝试重新连接屏幕",
@@ -92,6 +93,7 @@ t = I18n(
             "msg": {
                 "ThemeFileNotFound": "Theme file not found",
                 "ThemeFileImportSuccess": "Theme file import success",
+                "ThemeFileDeleteSuccess": "Theme file remove success",
                 "FirstRunNeedAdmin": "Please start with administrator privileges for the first run",
                 "ThemeFileLoadFailed": "Theme file load failed, please select a valid theme file",
                 "BrightnessSetFailed": "Failed to set screen brightness, please try to reconnect the screen",
