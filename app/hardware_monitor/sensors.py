@@ -199,9 +199,6 @@ class CPU:
         return self.fan_sensor and int(self.fan_sensor.Value)
 
     def status(self) -> dict:
-        """
-        :param beauty: Whether to beautify the display result.
-        """
         self.update()
         res = {
             "load": self.load(),
@@ -331,9 +328,6 @@ class GPU:
         return self.total() - self.used()
 
     def status(self) -> dict:
-        """
-        :param beauty: Whether to beautify the display result.
-        """
         self.update()
         res = {
             "load": self.load(),
@@ -351,34 +345,38 @@ class GPU:
 class Disk:
 
     def __init__(self) -> None:
-        self.total = 0
+        self.__last_update_at = None
+        self.update()
+    
+    def update(self):
+        # If the last update time is less than 60 seconds, do not update
+        if self.__last_update_at and time.time() - self.__last_update_at < 60:
+            return
+        self._total = 0
+        self._used = 0
         for part in psutil.disk_partitions():
-            self.total += psutil.disk_usage(part.mountpoint).total
-        self.total = round(self.total / 1024 / 1024 / 1024, 0)  # GB
+            try:
+                _usage = psutil.disk_usage(part.mountpoint)
+                self._total += _usage.total
+                self._used += _usage.used
+            except Exception as e:
+                logger.error(e)
+                continue
+        self._total = round(self._total / 1024 / 1024 / 1024, 0)  # GB
+        self._used = round(self._used / 1024 / 1024 / 1024, 1)  # GB
+        self._free = self._total - self._used
+        self._load = round(self._used / self._total, 2)  # %
+        self.__last_update_at = time.time()
+        return self
 
-    @staticmethod
-    def load() -> float:
-        return round(psutil.disk_usage("/").percent / 100, 2)  # %
-
-    @staticmethod
-    def used() -> float:  # GB
-        used = 0
-        for part in psutil.disk_partitions():
-            used += psutil.disk_usage(part.mountpoint).used
-        return round(used / 1024 / 1024 / 1024, 1)  # GB
-
-    def free(self) -> float:  # GB
-        return self.total - self.used()
 
     def status(self) -> dict:
-        """
-        :param beauty: Whether to beautify the display result.
-        """
+        self.update()
         res = {
-            "load": self.load(),
-            "used": self.used(),
-            "free": self.free(),
-            "total": self.total,
+            "load": self._load,
+            "used": self._used,
+            "free": self._free,
+            "total": self._total,
         }
         return res
 
@@ -625,23 +623,26 @@ class Weather:
 class Volume:
     def __init__(self) -> None:
         self.volume = None
+        self.available = False
         try:
             CoInitialize()
             devices = AudioUtilities.GetSpeakers()
-            if not devices:
-                raise ValueError("No audio devices found")
-            interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-            if not interface:
-                raise ValueError("Failed to activate IAudioEndpointVolume")
-            self.volume = cast(interface, POINTER(IAudioEndpointVolume))
-            if not self.volume:
-                raise ValueError("Failed to cast to IAudioEndpointVolume")
+            if devices:
+                interface = devices.Activate(
+                    IAudioEndpointVolume._iid_, CLSCTX_ALL, None
+                )
+                if interface:
+                    self.volume = cast(interface, POINTER(IAudioEndpointVolume))
+                    self.available = True
         except Exception as e:
-            print(f"Error in __init__: {e}")
-            raise
+            logger.warning(f"Audio device initialization failed: {e}")
+            self.available = False
 
     def __del__(self):
-        self.cleanup()
+        try:
+            self.cleanup()
+        except:
+            pass
 
     def cleanup(self):
         if hasattr(self, "volume") and self.volume:
@@ -650,10 +651,14 @@ class Volume:
             CoUninitialize()
 
     def load(self) -> float:
-        if not self.volume:
-            raise RuntimeError("Volume interface not initialized")
-        current_volume = self.volume.GetMasterVolumeLevelScalar()
-        return round(current_volume, 2)
+        if not self.available or not self.volume:
+            return 0.0  # Return 0 volume when no audio device is available
+        try:
+            current_volume = self.volume.GetMasterVolumeLevelScalar()
+            return round(current_volume, 2)
+        except Exception as e:
+            logger.warning(f"Failed to get volume level: {e}")
+            return 0.0
 
     def status(self) -> dict:
         res = {"load": self.load()}

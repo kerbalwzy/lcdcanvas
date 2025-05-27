@@ -2,7 +2,6 @@ from typing import Dict
 from ._base import LCD, generate_random_image, image2rgb565_le
 from .VirtualScreen import LCD_VirtualScreen
 from .SecondScreen import find_2nd_screen
-from .SN_QDTECH import LCD_SN_QDTECH
 
 __all__ = [
     "LCD",
@@ -14,7 +13,6 @@ __all__ = [
 
 # Create lcd screen driver instances
 lcd_virtual_screen = LCD_VirtualScreen()
-lcd_sn_qdtech = LCD_SN_QDTECH()
 
 
 # Supported and connected screens map
@@ -29,6 +27,4 @@ def find_connected_screens() -> Dict[str, LCD]:
     #
     if lcd_virtual_screen.is_connected():
         res[lcd_virtual_screen.unique_id()] = lcd_virtual_screen
-    if lcd_sn_qdtech.is_connected():
-        res[lcd_sn_qdtech.unique_id()] = lcd_sn_qdtech
     return res
