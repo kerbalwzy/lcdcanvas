@@ -2,6 +2,7 @@ export const zh = {
   label: {
     Preview: "预览",
     Setting: "设置",
+    Close: "关闭",
     Screen: "屏幕",
     ScreenSize: "屏幕尺寸",
     ScreenRadius: "屏幕半径",
@@ -13,7 +14,7 @@ export const zh = {
     StartDisplay: "开启屏显",
     StopDisplay: "停止屏显",
     ImportTheme: "导入主题",
-    ClickToFlush: "点击刷新",
+    SearchScreen: "搜索屏幕",
     Other: "其他",
     Lat: "纬度",
     Lon: "经度",
@@ -49,7 +50,9 @@ export const zh = {
     CustomText: "自定义文字",
     CustomImage: "自定义图片",
     WatherFakeValue: "晴\n25°C",
-    Remove : "删除",
+    Remove: "删除",
+    Yes: "是",
+    No: "否",
   },
   msg: {
     Required: "必填",

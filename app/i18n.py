@@ -52,7 +52,6 @@ class I18n:
         return self.t(key)
 
 
-
 t = I18n(
     loacle=settings.get_monitor_settings().get("lang", "zh"),
     fallbackLocale="en",
@@ -60,8 +59,6 @@ t = I18n(
         "zh": {
             "label": {
                 "Quite": "退出",
-                "HardwareMonitor": "硬件监视器",
-                "ThemeEditor": "主题编辑器",
                 "Info": "信息",
                 "Warning": "警告",
                 "Error": "错误",
@@ -82,8 +79,6 @@ t = I18n(
         "en": {
             "label": {
                 "Quite": "Quite",
-                "HardwareMonitor": "Hardware Monitor",
-                "ThemeEditor": "Theme Editor",
                 "Info": "Info",
                 "Warning": "Warning",
                 "Error": "Error",

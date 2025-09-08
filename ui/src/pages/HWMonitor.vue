@@ -1,267 +1,263 @@
 <template>
-  <v-container v-show="showPage" fluid>
-    <div class="d-flex justify-space-around align-center" style="height: 100%">
-      <div class="align-self-stretch" style="width: 600px">
-        <v-card flat>
-          <v-card-subtitle>{{ t("label.Preview") }}</v-card-subtitle>
-          <div v-if="screenSettings.lastTheme" class="d-flex align-center mb-2">
-            <v-tooltip :text="t('label.ThemeName')" location="bottom">
+  <v-container fluid>
+    <div class="d-flex flex-column" style="max-width: 850px">
+      <v-form ref="settingForm" validate-on="lazy">
+        <div class="d-flex align-stretch">
+          <v-select
+            style="width: 240px; max-width: 240px"
+            variant="solo-inverted"
+            :items="themes"
+            item-title="name"
+            item-value="name"
+            :loading="!screenSettings.lastTheme"
+            :rules="[formRuleRequire]"
+            :no-data-text="t('label.NoTheme')"
+            v-model="screenSettings.lastTheme"
+            @update:modelValue="selectTheme"
+          >
+            <template v-slot:label>
+              <strong>{{ t("label.Theme") }} ( {{ themes.length }} ) </strong>
+            </template>
+            <template v-slot:item="{ props: itemProps, item }">
+              <v-list-item v-bind="itemProps">
+                <template v-slot:subtitle>
+                  {{
+                    item.raw.shape == "rect"
+                      ? `${item.raw.width} x ${item.raw.height}`
+                      : `${item.raw.radius} x ${item.raw.radius}`
+                  }}
+                </template>
+                <template
+                  v-if="screenSettings.lastTheme != item.raw.name"
+                  v-slot:append
+                >
+                  <v-btn
+                    size="x-small"
+                    color="red-lighten-1"
+                    variant="tonal"
+                    @click.stop="deleteTheme(item.raw.name)"
+                    >{{ t("label.Remove") }}</v-btn
+                  >
+                </template>
+              </v-list-item>
+            </template>
+            <!-- <template v-slot:selection="{ item }">
+              <span>
+                {{ item.raw.name }}
+              </span>
+              <v-chip class="ml-5">{{
+                item.raw.shape == "rect"
+                  ? `${item.raw.width} x ${item.raw.height}`
+                  : `${item.raw.radius} x ${item.raw.radius}`
+              }}</v-chip>
+            </template> -->
+          </v-select>
+          <v-select
+            class="ml-3"
+            variant="solo-inverted"
+            style="width: 240px; max-width: 240px"
+            :label="t('label.Screen')"
+            :items="screens"
+            item-title="uid"
+            item-value="uid"
+            :loading="!monitorSettings.lastScreen || screens.length == 0"
+            :disabled="screens.length == 0"
+            :rules="[formRuleRequire]"
+            :no-data-text="t('label.NoScreen')"
+            v-model="monitorSettings.lastScreen"
+            @update:modelValue="selectScreen"
+          >
+            <template v-slot:label>
+              <strong>{{ t("label.Screen") }} ( {{ screens.length }} ) </strong>
+            </template>
+            <template v-slot:item="{ props: itemProps, item }">
+              <v-list-item
+                v-bind="itemProps"
+                :subtitle="`${item.raw.width} x ${item.raw.height}`"
+              ></v-list-item>
+            </template>
+            <!-- <template v-slot:selection="{ item }">
+              {{ item.raw.uid }}
+              <v-chip class="ml-5">
+                {{ `${item.raw.width} x ${item.raw.height}` }}</v-chip
+              >
+            </template> -->
+          </v-select>
+          <v-btn
+            class="ml-3 pl-3 pr-3"
+            style="margin-bottom: 22px; min-width: 134.06px"
+            size="middle"
+            :loading="displayStateUpdating"
+            :color="displayState ? 'warning' : 'success'"
+            :disabled="
+              !monitorSettings.lastScreen ||
+              !screenSettings.lastTheme ||
+              screens.length == 0 ||
+              themes.length == 0 ||
+              displayStateUpdating
+            "
+            @click="toggleDisplay()"
+            >{{
+              displayState ? t("label.StopDisplay") : t("label.StartDisplay")
+            }}
+          </v-btn>
+          <div class="d-flex flex-wrap justify-end" style="flex-grow: 1">
+            <v-tooltip :text="t('label.SearchScreen')" location="bottom">
               <template v-slot:activator="{ props }">
-                <v-chip v-bind="props" color="primary">{{
-                  screenSettings.lastTheme
-                }}</v-chip>
-              </template>
-            </v-tooltip>
-            <v-spacer></v-spacer>
-            <v-tooltip :text="t('label.ThemePixel')" location="bottom">
-              <template v-slot:activator="{ props }">
-                <v-chip
-                  v-if="themeSelected.shape == 'rect'"
+                <v-btn
                   v-bind="props"
-                  color="primary"
-                >
-                  {{ themeSelected.width }} X {{ themeSelected.height }}
-                </v-chip>
-                <v-chip v-else v-bind="props" color="primary">
-                  {{ themeSelected.radius }} X {{ themeSelected.radius }}
-                </v-chip>
+                  icon="mdi-card-search"
+                  variant="text"
+                  @click="loadScreens"
+                ></v-btn>
               </template>
             </v-tooltip>
+            <v-tooltip :text="t('label.ImportTheme')" location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  icon="mdi-file-plus"
+                  variant="text"
+                  @click="importTheme"
+                ></v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="t('label.Setting')" location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  icon="mdi-cogs"
+                  variant="text"
+                  @click="showSettingDialog = true"
+                ></v-btn>
+              </template>
+            </v-tooltip>
+            <LanguageBtn class="ml-1"></LanguageBtn>
           </div>
-          <div class="canvasWrapper d-flex justify-center align-center">
-            <canvas class="canvas" ref="canvasRef"></canvas>
-          </div>
-        </v-card>
-      </div>
-      <div class="align-self-stretch" style="width: 350px">
-        <v-card flat>
-          <v-card-subtitle>{{ t("label.Setting") }}</v-card-subtitle>
-          <v-form ref="settingForm" validate-on="lazy">
-            <v-card-text>
-              <v-select
-                clearable
-                density="compact"
-                :label="t('label.Screen')"
-                :items="screens"
-                item-title="uid"
-                item-value="uid"
-                :loading="!monitorSettings.lastScreen"
-                :rules="[formRuleRequire]"
-                :no-data-text="t('label.NoScreen')"
-                v-model="monitorSettings.lastScreen"
-                @update:modelValue="selectScreen"
-              >
-                <template v-slot:prepend>
-                  <v-tooltip :text="t('label.ClickToFlush')">
-                    <template v-slot:activator="{ props }">
-                      <v-chip
-                        v-bind="props"
-                        color="success"
-                        @click="loadScreens"
-                        >{{ screens.length }}</v-chip
-                      >
-                    </template>
-                  </v-tooltip>
-                </template>
-                <template v-slot:append>
-                  <LanguageBtn></LanguageBtn>
-                </template>
-                <template v-slot:item="{ props: itemProps, item }">
-                  <v-list-item
-                    v-bind="itemProps"
-                    :subtitle="`${item.raw.width} x ${item.raw.height}`"
-                  ></v-list-item>
-                </template>
-              </v-select>
-              <v-select
-                clearable
-                density="compact"
-                :label="t('label.Theme')"
-                :items="themes"
-                item-title="name"
-                item-value="name"
-                :loading="!screenSettings.lastTheme"
-                :rules="[formRuleRequire]"
-                :no-data-text="t('label.NoTheme')"
-                v-model="screenSettings.lastTheme"
-                @update:modelValue="selectTheme"
-              >
-                <template v-slot:prepend>
-                  <v-tooltip :text="t('label.ClickToFlush')">
-                    <template v-slot:activator="{ props }">
-                      <v-chip
-                        v-bind="props"
-                        color="success"
-                        @click="loadThemes"
-                        >{{ themes.length }}</v-chip
-                      >
-                    </template>
-                  </v-tooltip>
-                </template>
-                <template v-slot:item="{ props: itemProps, item }">
-                  <v-list-item v-bind="itemProps">
-                    <template v-slot:subtitle>
-                      {{
-                        item.raw.shape == "rect"
-                          ? `${item.raw.width} x ${item.raw.height}`
-                          : `${item.raw.radius} x ${item.raw.radius}`
-                      }}
-                    </template>
-                    <template
-                      v-if="screenSettings.lastTheme != item.raw.name"
-                      v-slot:append
-                    >
-                      <v-btn
-                        size="x-small"
-                        color="red-lighten-1"
-                        variant="tonal"
-                        @click.stop="deleteTheme(item.raw.name)"
-                        >{{ t("label.Remove") }}</v-btn
-                      >
-                    </template>
-                  </v-list-item>
-                </template>
-                <template v-slot:append>
-                  <v-tooltip :text="t('label.ImportTheme')">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        class="ml-2"
-                        v-bind="props"
-                        size="x-small"
-                        icon="mdi-plus"
-                        color="primary"
-                        flat
-                        @click="importTheme"
-                      ></v-btn>
-                    </template>
-                  </v-tooltip>
-                </template>
-              </v-select>
-              <div class="text-caption">{{ t("label.Brightness") }}</div>
-              <v-slider
-                density="compact"
-                prepend-icon="mdi-brightness-6"
-                thumb-label="always"
-                v-model.number="screenSettings.brightness"
-                :disabled="!monitorSettings.lastScreen"
-                :max="100"
-                :min="10"
-                :step="10"
-                @update:modelValue="setScreenSettings()"
-              ></v-slider>
-              <div class="text-caption">{{ t("label.Rotation") }}</div>
-              <v-slider
-                density="compact"
-                prepend-icon="mdi-screen-rotation"
-                thumb-label="always"
-                v-model.number="screenSettings.rotation"
-                :disabled="!monitorSettings.lastScreen"
-                :max="270"
-                :min="0"
-                :step="90"
-                @update:modelValue="setScreenSettings()"
-              >
-                <template v-slot:thumb-label="{ modelValue }">
-                  {{ `${modelValue}°` }}
-                </template>
-              </v-slider>
-              <div class="text-caption">{{ t("label.Other") }}</div>
-              <div>
-                <v-text-field
-                  variant="outlined"
-                  class="my-2"
-                  :label="t('label.Weather') + ' APIKey'"
-                  type="text"
-                  density="compact"
-                  hide-details
-                  v-model="monitorSettings.weather.apiKey"
-                  @blur="setMonitorSettings()"
-                  @keydown.enter="setMonitorSettings()"
-                >
-                  <template v-slot:append>
-                    <v-tooltip location="left">
-                      <template v-slot:activator="{ props }">
-                        <v-icon
-                          class="cursor-pointer"
-                          v-bind="props"
-                          icon="mdi-help-circle-outline"
-                          @click="toOpenWeatherOrg"
-                        ></v-icon>
-                      </template>
-                      {{ t("label.GetYourOwnAPIKey") }}
-                    </v-tooltip>
-                  </template>
-                </v-text-field>
-              </div>
-              <div class="d-flex" style="width: 100%">
-                <v-text-field
-                  variant="outlined"
-                  class="my-2"
-                  max-width="120"
-                  :label="t('label.Lat')"
-                  type="number"
-                  density="compact"
-                  hide-details
-                  v-model.number="monitorSettings.weather.lat"
-                  :min="-90"
-                  :max="90"
-                  :step="0.0001"
-                  @blur="setMonitorSettings()"
-                  @keydown.enter="setMonitorSettings()"
-                ></v-text-field>
-                <v-text-field
-                  variant="outlined"
-                  class="my-2 ml-2"
-                  max-width="120"
-                  :label="t('label.Lon')"
-                  type="number"
-                  density="compact"
-                  hide-details
-                  v-model.number="monitorSettings.weather.lon"
-                  :min="-180"
-                  :max="180"
-                  :step="0.0001"
-                  @blur="setMonitorSettings()"
-                  @keydown.enter="setMonitorSettings()"
-                ></v-text-field>
-              </div>
-              <div class="d-flex">
-                <v-switch
-                  inset
-                  density="compact"
-                  class="my-2"
-                  :label="t('label.AutoStartup')"
-                  v-model="monitorSettings.startup"
-                  base-color="secondary"
-                  color="success"
-                  @update:modelValue="setMonitorSettings()"
-                ></v-switch>
-              </div>
-              <v-btn
-                class="ma-2"
-                block
-                size="large"
-                :loading="displayStateUpdating"
-                :color="displayState ? 'warning' : 'success'"
-                :disabled="
-                  !monitorSettings.lastScreen ||
-                  !screenSettings.lastTheme ||
-                  screens.length == 0 ||
-                  themes.length == 0 ||
-                  displayStateUpdating
-                "
-                @click="toggleDisplay()"
-                >{{
-                  displayState
-                    ? t("label.StopDisplay")
-                    : t("label.StartDisplay")
-                }}</v-btn
-              >
-            </v-card-text>
-          </v-form>
-        </v-card>
-      </div>
+        </div>
+      </v-form>
+
+      <v-card elevation="20">
+        <div class="canvasWrapper d-flex justify-center align-center">
+          <canvas class="canvas" ref="canvasRef"></canvas>
+        </div>
+      </v-card>
     </div>
+    <v-dialog v-model="showSettingDialog" max-width="450">
+      <v-card elevation="20" class="pa-5">
+        <v-card-subtitle>{{ t("label.Setting") }}</v-card-subtitle>
+        <v-card-text>
+          <div class="text-caption">{{ t("label.Brightness") }}</div>
+          <v-slider
+            density="compact"
+            prepend-icon="mdi-brightness-6"
+            thumb-label="always"
+            v-model.number="screenSettings.brightness"
+            :disabled="!monitorSettings.lastScreen"
+            :max="100"
+            :min="10"
+            :step="10"
+            @update:modelValue="setScreenSettings()"
+          ></v-slider>
+          <div class="text-caption">{{ t("label.Rotation") }}</div>
+          <v-slider
+            density="compact"
+            prepend-icon="mdi-screen-rotation"
+            thumb-label="always"
+            v-model.number="screenSettings.rotation"
+            :disabled="!monitorSettings.lastScreen"
+            :max="270"
+            :min="0"
+            :step="90"
+            @update:modelValue="setScreenSettings()"
+          >
+            <template v-slot:thumb-label="{ modelValue }">
+              {{ `${modelValue}°` }}
+            </template>
+          </v-slider>
+          <div class="text-caption">{{ t("label.Other") }}</div>
+          <div>
+            <v-text-field
+              variant="outlined"
+              class="my-2"
+              :label="t('label.Weather') + ' APIKey'"
+              type="text"
+              density="compact"
+              hide-details
+              v-model="monitorSettings.weather.apiKey"
+              @blur="setMonitorSettings()"
+              @keydown.enter="setMonitorSettings()"
+            >
+              <template v-slot:append>
+                <v-tooltip location="left">
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      class="cursor-pointer"
+                      v-bind="props"
+                      icon="mdi-help-circle-outline"
+                      @click="toOpenWeatherOrg"
+                    ></v-icon>
+                  </template>
+                  {{ t("label.GetYourOwnAPIKey") }}
+                </v-tooltip>
+              </template>
+            </v-text-field>
+          </div>
+          <div class="d-flex" style="width: 100%">
+            <v-text-field
+              variant="outlined"
+              class="my-2"
+              max-width="120"
+              :label="t('label.Lat')"
+              type="number"
+              density="compact"
+              hide-details
+              v-model.number="monitorSettings.weather.lat"
+              :min="-90"
+              :max="90"
+              :step="0.0001"
+              @blur="setMonitorSettings()"
+              @keydown.enter="setMonitorSettings()"
+            ></v-text-field>
+            <v-text-field
+              variant="outlined"
+              class="my-2 ml-2"
+              max-width="120"
+              :label="t('label.Lon')"
+              type="number"
+              density="compact"
+              hide-details
+              v-model.number="monitorSettings.weather.lon"
+              :min="-180"
+              :max="180"
+              :step="0.0001"
+              @blur="setMonitorSettings()"
+              @keydown.enter="setMonitorSettings()"
+            ></v-text-field>
+          </div>
+          <div class="d-flex d-flex-between">
+            <v-switch
+              density="compact"
+              class="my-2 ml-2"
+              :label="t('label.AutoStartup')"
+              v-model="monitorSettings.startup"
+              color="primary"
+              @update:modelValue="setMonitorSettings()"
+            >
+              <template v-slot:label>
+                <span class="ml-1">{{ t("label.AutoStartup") }}</span>
+              </template>
+            </v-switch>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-space></v-space>
+          <v-btn @click="showSettingDialog = false">{{
+            t("label.Close")
+          }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script setup lang="ts">
@@ -287,7 +283,7 @@ interface Theme {
 }
 
 const { t, locale } = useI18n();
-const showPage = ref(false);
+const showSettingDialog = ref(false);
 const settingForm = ref();
 const displayStateUpdating = ref(false);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -315,12 +311,9 @@ const screenSettings = reactive({
 const displayState = ref(false);
 
 const loadScreens = () => {
+  screens.length = 0;
   pywebview.api.loadScreens().then((res: any) => {
-    screens.length = 0;
     screens.push(...res);
-    if (screens.length == 0) {
-      monitorSettings.lastScreen = "";
-    }
   });
 };
 
@@ -387,7 +380,7 @@ const selectScreen = (screen: string) => {
         screenSettings.brightness = res.brightness || 100;
         screenSettings.rotation = res.rotation || 0;
         // If the last theme is in the theme list, select it
-        if (res.lastTheme && themes.find((t) => t.name == res.lastTheme)) {
+        if (themes.find((t) => t.name == res.lastTheme)) {
           selectTheme(res.lastTheme);
         } else {
           // chose the first theme that suit for the screen
@@ -489,7 +482,7 @@ const startThemePreview = () => {
     pywebview.api.getSensorsValue(sensors.value).then((res: any) => {
       player.value!.loadSensorsValue(res);
     });
-  }, 1000);
+  }, 900);
 };
 
 const stopThemePreview = () => {
@@ -594,42 +587,37 @@ onUnmounted(() => {
 });
 
 window.addEventListener("pywebviewready", function () {
-  loadScreens();
+  // Load themes and set the last theme
   loadThemes();
-  setTimeout(() => {
-    // Get the monitor settings
-    pywebview.api
-      .getMonitorSettings()
-      .then((res: any) => {
-        monitorSettings.lang = res.lang || "";
-        monitorSettings.startup = res.startup || false;
-        monitorSettings.lastScreen = res.lastScreen || "";
-        res.weather = res.weather || {
-          apiKey: "5796abbde9106b7da4febfae8c44c232",
-          lat: 0,
-          lon: 0,
-        };
-        Object.assign(monitorSettings.weather, res.weather);
-        // If the last screen is in the screens list, select it
-        const screen_uids = screens.map((screen) => screen.uid);
-        if (screen_uids.includes(monitorSettings.lastScreen)) {
-          selectScreen(monitorSettings.lastScreen);
-        } else {
-          selectScreen("");
-        }
-        if (monitorSettings.lang) {
-          locale.value = monitorSettings.lang;
-        }
-        displayState.value = res.displayState || false;
-        // Start theme preview interval
-        startThemePreview();
-      })
-      .finally(() => {
-        // Show the ready page
-        showPage.value = true;
-      });
-  }, 100);
-
+  // Load screens and set the last screen
+  screens.length = 0;
+  pywebview.api.loadScreens().then((res: any) => {
+    screens.push(...res);
+    pywebview.api.getMonitorSettings().then((res: any) => {
+      monitorSettings.lang = res.lang || "";
+      monitorSettings.startup = res.startup || false;
+      monitorSettings.lastScreen = res.lastScreen || "";
+      res.weather = res.weather || {
+        apiKey: "5796abbde9106b7da4febfae8c44c232",
+        lat: 0,
+        lon: 0,
+      };
+      Object.assign(monitorSettings.weather, res.weather);
+      // If the last screen is in the screens list, select it
+      console.log(monitorSettings.lastScreen);
+      if (screens.find((screen) => screen.uid == monitorSettings.lastScreen)) {
+        selectScreen(monitorSettings.lastScreen);
+      } else {
+        selectScreen("");
+      }
+      if (monitorSettings.lang) {
+        locale.value = monitorSettings.lang;
+      }
+      displayState.value = res.displayState || false;
+      // Start theme preview interval
+      startThemePreview();
+    });
+  });
   window.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       startThemePreview();

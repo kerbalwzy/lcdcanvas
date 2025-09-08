@@ -3,7 +3,6 @@
     <template v-slot:activator="{ props }">
       <v-btn
         v-bind="props"
-        size="small"
         icon="mdi-translate"
         variant="text"
         tabindex="0"

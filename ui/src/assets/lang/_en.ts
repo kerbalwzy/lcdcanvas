@@ -2,6 +2,7 @@ export const en = {
   label: {
     Preview: "Preview",
     Setting: "Settings",
+    Close: "Close",
     Screen: "Screen",
     ScreenSize: "Screen Size",
     ScreenRadius: "Screen Radius",
@@ -13,7 +14,7 @@ export const en = {
     StartDisplay: "Start Display",
     StopDisplay: "Stop Display",
     ImportTheme: "Import Theme",
-    ClickToFlush: "Click to Refresh",
+    SearchScreen: "Search Screen",
     Other: "Other",
     Lat: "Latitude",
     Lon: "Longitude",
@@ -49,7 +50,9 @@ export const en = {
     CustomText: "Custom Text",
     CustomImage: "Custom Image",
     WatherFakeValue: "Sunny\n25°C",
-    Remove : "Remove",
+    Remove: "Remove",
+    Yes: "Yes",
+    No: "No",
   },
   msg: {
     Required: "Required",
