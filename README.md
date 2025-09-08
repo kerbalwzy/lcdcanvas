@@ -18,8 +18,7 @@
 ## 支持的屏幕:
 
 如果您是LCD副屏的制造商, 希望此开源项目适配您的屏幕或者想要定制私有版本, 可以联系
-<a href="mailto:kerbalwzy@gmail.com?subject=LCDCANVS定制开发" target="_blank">kerbalwzy@gmail.com</a>
-如果您具有开发能力, 可以Fork本项目后, 自己实现屏幕的适配功能, 并提交PR到本项目中。
+<a href="https://www.xiaohongshu.com/search_result?keyword=95490502991&source=web_explore_feed" target="_blank">小红书: 95490502991</a>
 
 | 序列号 | 尺寸 | 分辨率 | 代码 | 制造商 | 授权协议 | 其它说明 |
 | --- | --- | --- | --- | --- | --- | --- |

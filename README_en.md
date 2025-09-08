@@ -17,7 +17,7 @@ This is an open source project for LCD secondary screen host software. Its main 
 
 ## Supported Screens:
 
-If you are an LCD secondary screen manufacturer and would like this open-source project to support your screen or wish to customize a private version, you can contact [kerbalwzy@gmail.com](mailto:kerbalwzy@gmail.com?subject=LCDCANVS%20Custom%20Development). If you have development skills, you can fork this project, implement screen compatibility yourself, and submit a PR to this project.
+If you are an LCD secondary screen manufacturer and would like this open-source project to support your screen or wish to customize a private version, you can contact me [rednote: 95490502991](https://www.xiaohongshu.com/search_result?keyword=95490502991&source=web_explore_feed). 
 
 | Serial No. | Size | Resolution | Code | Manufacturer | Authorization Agreement | Other Notes |
 | --- | --- | --- | --- | --- | --- | --- |
